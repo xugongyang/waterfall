@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="../css/reset.css">
+    <link rel="stylesheet" href="../css/waterfall.css">
+
+
+</head>
+<body>
+<section id="waterFall" class="water-fall  clearfix">
+    <div class="box">
+        <div class="pic">
+            <img class="lazy" src="../image/wf1.jpg" alt="">
+            <div class="evaluate">
+                <p class="customer">胡歌</p>
+                <p class="desc">生命注定要经历一次次磨难，才能塑造出与众不同，所有的经历都是获得，所有的获得都是上苍给予的恩宠。</p>
+            </div>
+        </div>
+    </div>
+    <div class="box">
+        <div class="pic">
+            <img class="lazy" src="../image/wf2.jpg" alt="">
+            <div class="evaluate">
+                <p class="customer">胡歌</p>
+                <p class="desc">你若太害怕，闭上眼就好。</p>
+            </div>
+        </div>
+    </div>
+    <div class="box">
+        <div class="pic">
+            <img class="lazy" src="../image/wf3.jpg" alt="">
+            <div class="evaluate">
+                <p class="customer">胡歌</p>
+                <p class="desc">如果皮囊难以修复，那就用思想去填满它吧！</p>
+            </div>
+        </div>
+    </div>
+    <div class="box">
+        <div class="pic">
+            <img class="lazy" src="../image/wf4.jpg" alt="">
+            <div class="evaluate">
+                <p class="customer">胡歌</p>
+                <p class="desc">不知道是哪里走错，路的尽头没有人等我。</p>
+            </div>
+        </div>
+    </div>
+    <div class="box">
+        <div class="pic">
+            <img class="lazy" src="../image/wf5.jpg" alt="">
+            <div class="evaluate">
+                <p class="customer">胡歌</p>
+                <p class="desc">当我在黑暗中艰难摸索，试图拾起些碎片的时候，却发现这个过程远没有想像中那么简单。</p>
+            </div>
+        </div>
+    </div>
+    <div class="box">
+        <div class="pic">
+            <img class="lazy" src="../image/wf6.jpg" alt="">
+            <div class="evaluate">
+                <p class="customer">胡歌</p>
+                <p class="desc">我们，结成伴趟过天真。</p>
+            </div>
+        </div>
+    </div>
+    <div class="box">
+        <div class="pic">
+            <img class="lazy" src="../image/wf7.jpg" alt="">
+            <div class="evaluate">
+                <p class="customer"><strong>胡 歌</strong></p>
+                <p class="desc">在拥有的时候懂得珍惜，就不会害怕失去；若失去了才知道珍惜，就算不上真正拥有。</p>
+            </div>
+        </div>
+    </div>
+    <div class="box">
+        <div class="pic">
+            <img class="lazy" src="../image/wf8.jpg" alt="">
+            <div class="evaluate">
+                <p class="customer">胡歌</p>
+                <p class="desc">忍了多久，错过青春。却憎恨，别人奋不顾身。</p>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html>
+<script src="../js/jquery-3.2.1.min.js"></script>
+<script>
+    $(function(){
+        var wfData=null;
+        function init(){
+            waterfall.initwf();
+            waterfall.wfReload();
+        }
+        //滚动到最后一张图片时动态加载盒子
+        $(window).on('scroll',function(){
+            if(waterfall.isLoad()){
+                waterfall.dynamicAddBox(8);
+                waterfall.wfReload();
+            }
+        });
+        //瀑布流
+        var waterfall={
+            columnCount:Math.floor($('#waterFall').width() / $("#waterFall .box").eq(0).width()),
+            boxHeightArr:[],//每列高度集合
+            wfReload:function(){
+                //重新加载
+                console.log('当前盒子个数='+$("#waterFall .box").length);
+                waterfall.wfLoad($("#waterFall .box"),waterfall.columnCount);
+            },
+            //动态添加盒子
+            dynamicAddBox:function(length){
+                var tempList=waterfall.getRandomList(length,wfData.wfList);
+                $.each(tempList,function(index,item){
+                    $('<div class="box">'+
+                            '<div class="pic">'+
+                            '<img class="lazy" src="'+item.img+'" alt="">'+
+                            '<div class="evaluate">'+
+                            '<p class="customer">'+item.user+'</p>'+
+                            '<p class="desc">'+item.desc+'</p>'+
+                            '</div>'+
+                            '</div>'+
+                            '</div>').appendTo($('#waterFall'));
+                });
+            },
+            //动态定位
+            wfLoad:function(boxList,columnCount){
+                boxList.each(function(index, item) {
+                    if (index < columnCount) {
+                        //首行每列高度直接加入数组
+                        waterfall.boxHeightArr[index] = boxList.eq(index).height();
+                    } else {
+                        //数组boxHeightArr中的最小值
+                        var minHeight = Math.min.apply(null, waterfall.boxHeightArr);
+                        var minHeightIndex = $.inArray(minHeight, waterfall.boxHeightArr);
+                        $(item).css({
+                            'position': 'absolute',
+                            'top': minHeight+10,
+                            'left': boxList.eq(minHeightIndex).position().left
+                        });
+                        //数组 更新添加了box后的列高 元素原来高度+新增元素高度
+                        waterfall.boxHeightArr[minHeightIndex] += boxList.eq(index).height()+10;
+                    }
+                });
+            },
+            initwf:function(){
+                $.ajax({
+                    url: "../json/waterfall.json",
+                    type: "GET",
+                    dataType: "json",
+                    charset:"utf-8",
+                    async:false,
+                    success: function(data) {
+                        wfData=data;
+                    }
+                });
+            },
+            //随机选取指定个数 不同的box
+            getRandomList:function(length,originaArr){
+                var returnArr=[];
+                var indexArr=[];
+                var temp=null;
+                while(indexArr.length<length){
+                    temp=Math.floor(Math.random()*originaArr.length);
+                    if($.inArray(temp, indexArr)<0){
+                        indexArr.push(temp);
+                        returnArr.push(originaArr[temp]);
+                    }
+                }
+                return returnArr;
+            },
+            //是否加载盒子
+            isLoad:function(){
+                var lastBox=$("#waterFall .box").last();
+                var flagHeight=lastBox.offset().top+Math.floor(lastBox.outerHeight()/2);
+                var scrollTop=$(window).scrollTop();
+                var documentH=$(window).height();
+                return scrollTop+documentH>flagHeight;
+            }
+        }
+        //初始化
+        init();
+    });
+</script>

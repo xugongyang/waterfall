@@ -1,0 +1,10 @@
+
+
+
+.water-fall {width: 1000px;margin: 20px auto 0;position: relative;height: 1170px;}
+.water-fall .box {padding: 10px 0 0 10px;float: left;}
+.water-fall .box .pic {padding: 10px;border: 1px solid #ccc;border-radius: 5px;box-shadow: 0 0 5px #ccc;width: 218px;position: relative;}
+.water-fall .box .pic img {width: 218px;height:auto;}
+.water-fall .box .pic .evaluate {position: absolute;bottom: 13px;width: 218px;background-color: rgba(13, 135, 84, 0.5);}
+.water-fall .box .pic .evaluate .customer {font-size: 14px;color: #fff;margin-left: 10px;}
+.water-fall .box .pic .evaluate .desc {font-size: 12px;color: #fff;margin-left: 10px;line-height: 20px;}
